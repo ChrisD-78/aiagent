@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Mail Assistent</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📧 E-Mail Assistent</h1>
+            <p class="subtitle">Professionelle Antwortentwürfe für Ihre Geschäftskommunikation</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <div class="api-key-section">
+                    <label for="apiKey">
+                        <span class="label-icon">🔑</span>
+                        API-Schlüssel (OpenAI)
+                    </label>
+                    <div class="input-group">
+                        <input 
+                            type="password" 
+                            id="apiKey" 
+                            placeholder="sk-..." 
+                            autocomplete="off"
+                        >
+                        <button type="button" class="toggle-visibility" id="toggleApiKey" aria-label="Sichtbarkeit umschalten">
+                            👁️
+                        </button>
+                    </div>
+                    <small class="help-text">Ihr API-Schlüssel wird nur lokal gespeichert und nicht übertragen.</small>
+                </div>
+            </div>
+
+            <div class="card">
+                <label for="emailInput">
+                    <span class="label-icon">📨</span>
+                    Eingehende E-Mail
+                </label>
+                <textarea 
+                    id="emailInput" 
+                    placeholder="Fügen Sie hier die eingehende E-Mail ein, auf die Sie antworten möchten..."
+                    rows="8"
+                ></textarea>
+            </div>
+
+            <div class="action-section">
+                <button id="generateBtn" class="btn-primary">
+                    <span class="btn-icon">✨</span>
+                    Antwortentwurf erstellen
+                </button>
+            </div>
+
+            <div class="card result-card" id="resultCard" style="display: none;">
+                <div class="result-header">
+                    <label>
+                        <span class="label-icon">✉️</span>
+                        Ihr Antwortentwurf
+                    </label>
+                    <button id="copyBtn" class="btn-secondary" title="In Zwischenablage kopieren">
+                        <span>📋</span> Kopieren
+                    </button>
+                </div>
+                <div id="emailOutput" class="email-output"></div>
+            </div>
+
+            <div class="loader" id="loader" style="display: none;">
+                <div class="spinner"></div>
+                <p>Antwortentwurf wird erstellt...</p>
+            </div>
+        </main>
+
+        <footer>
+            <p>Entwickelt für professionelle deutschsprachige Geschäftskommunikation</p>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
