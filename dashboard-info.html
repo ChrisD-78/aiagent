@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatische E-Mail-Verarbeitung</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📧 Automatische E-Mail-Verarbeitung</h1>
+            <p class="subtitle">E-Mails werden automatisch über CloudMailin verarbeitet</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">✅ System ist aktiv!</h2>
+                
+                <p style="line-height: 1.8; margin-bottom: 1.5rem;">
+                    Alle E-Mails, die an <strong>laola@baederbook.de</strong> gesendet werden, 
+                    werden automatisch empfangen und verarbeitet. Die KI generiert automatisch 
+                    professionelle Antwortentwürfe.
+                </p>
+
+                <h3 style="color: var(--text-color); margin-bottom: 1rem;">🔄 So funktioniert es:</h3>
+                
+                <div style="background: var(--bg-color); padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 1.5rem;">
+                    <ol style="line-height: 2; padding-left: 1.5rem;">
+                        <li><strong>E-Mail eingehend:</strong> Nachricht kommt bei laola@baederbook.de an</li>
+                        <li><strong>Automatische Weiterleitung:</strong> United Domains leitet an CloudMailin weiter</li>
+                        <li><strong>KI-Verarbeitung:</strong> OpenAI GPT-4 generiert Antwortentwurf</li>
+                        <li><strong>Logging:</strong> Ergebnis wird in Netlify gespeichert</li>
+                    </ol>
+                </div>
+
+                <h3 style="color: var(--text-color); margin-bottom: 1rem;">📊 Wo finde ich die generierten Antworten?</h3>
+                
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 0.75rem; border: 2px solid var(--primary-color); margin-bottom: 1.5rem;">
+                    <p style="margin-bottom: 1rem;"><strong>In Netlify Function Logs:</strong></p>
+                    <ol style="line-height: 2; padding-left: 1.5rem; margin-bottom: 1rem;">
+                        <li>Gehen Sie zu <a href="https://app.netlify.com" target="_blank" style="color: var(--primary-color);">Netlify Dashboard</a></li>
+                        <li>Öffnen Sie Ihr Projekt <strong>"cdagent"</strong></li>
+                        <li>Klicken Sie auf <strong>"Functions"</strong></li>
+                        <li>Wählen Sie <strong>"receive-email"</strong></li>
+                        <li>Klicken Sie auf <strong>"Logs"</strong></li>
+                    </ol>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        💡 Dort sehen Sie alle eingehenden E-Mails und die automatisch generierten Antworten!
+                    </p>
+                </div>
+
+                <h3 style="color: var(--text-color); margin-bottom: 1rem;">✏️ Manuelle E-Mail-Verarbeitung</h3>
+                
+                <p style="line-height: 1.8; margin-bottom: 1rem;">
+                    Für schnelle, manuelle E-Mail-Bearbeitung nutzen Sie die Hauptseite:
+                </p>
+                
+                <a href="index.html" class="btn-primary" style="text-decoration: none; display: inline-block; margin-bottom: 1.5rem;">
+                    <span>📧</span>
+                    Zur manuellen E-Mail-Verarbeitung
+                </a>
+
+                <h3 style="color: var(--text-color); margin-bottom: 1rem;">🧪 System testen</h3>
+                
+                <div style="background: #fef3c7; padding: 1.5rem; border-radius: 0.75rem; border: 2px solid #f59e0b;">
+                    <p style="margin-bottom: 1rem;"><strong>So testen Sie das automatische System:</strong></p>
+                    <ol style="line-height: 2; padding-left: 1.5rem;">
+                        <li>Senden Sie eine E-Mail an <strong>laola@baederbook.de</strong></li>
+                        <li>Warten Sie ca. 1 Minute</li>
+                        <li>Öffnen Sie Netlify → Functions → receive-email → Logs</li>
+                        <li>Sie sehen die E-Mail und die generierte Antwort! ✨</li>
+                    </ol>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Automatisches E-Mail-System powered by CloudMailin + OpenAI</p>
+        </footer>
+    </div>
+</body>
+</html>
+
