@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+const fetch = require('node-fetch');
 
 exports.handler = async (event, context) => {
   // CORS Headers
@@ -27,56 +27,36 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // E-Mail-Konfiguration aus Umgebungsvariablen
-    const emailConfig = {
-      user: process.env.EMAIL_USER || 'laola@baederbook.de',
-      password: process.env.EMAIL_PASSWORD,
-      host: process.env.SMTP_HOST || 'smtp.united-domains.de',
-      port: parseInt(process.env.SMTP_PORT || '587')
-    };
+    // Versuche zuerst SendGrid
+    const sendgridKey = process.env.SENDGRID_API_KEY;
+    const fromEmail = process.env.EMAIL_USER || 'laola@baederbook.de';
 
-    if (!emailConfig.password) {
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ 
-          error: 'E-Mail-Konfiguration nicht vollständig. Bitte Umgebungsvariablen überprüfen.' 
-        })
-      };
+    if (sendgridKey) {
+      return await sendViaSendGrid(to, subject, message, fromEmail, sendgridKey, headers);
     }
 
-    // Nodemailer Transporter erstellen
-    const transporter = nodemailer.createTransport({
-      host: emailConfig.host,
-      port: emailConfig.port,
-      secure: emailConfig.port === 465, // true für Port 465, false für andere Ports
-      auth: {
-        user: emailConfig.user,
-        pass: emailConfig.password
-      },
-      tls: {
-        rejectUnauthorized: false // Für self-signed certificates
-      }
-    });
+    // Fallback: Mailgun
+    const mailgunKey = process.env.MAILGUN_API_KEY;
+    const mailgunDomain = process.env.MAILGUN_DOMAIN;
 
-    // E-Mail senden
-    const info = await transporter.sendMail({
-      from: `"E-Mail Assistent" <${emailConfig.user}>`,
-      to: to,
-      subject: subject || 'Nachricht von E-Mail Assistent',
-      text: message,
-      html: message.replace(/\n/g, '<br>')
-    });
+    if (mailgunKey && mailgunDomain) {
+      return await sendViaMailgun(to, subject, message, fromEmail, mailgunKey, mailgunDomain, headers);
+    }
 
-    console.log('E-Mail gesendet:', info.messageId);
+    // Fallback: SMTP2GO
+    const smtp2goKey = process.env.SMTP2GO_API_KEY;
 
+    if (smtp2goKey) {
+      return await sendViaSMTP2GO(to, subject, message, fromEmail, smtp2goKey, headers);
+    }
+
+    // Keine E-Mail-Service-API konfiguriert
     return {
-      statusCode: 200,
+      statusCode: 500,
       headers,
-      body: JSON.stringify({
-        success: true,
-        messageId: info.messageId,
-        message: `E-Mail erfolgreich an ${to} gesendet`
+      body: JSON.stringify({ 
+        error: 'Kein E-Mail-Service konfiguriert. Bitte setzen Sie SENDGRID_API_KEY, MAILGUN_API_KEY oder SMTP2GO_API_KEY als Umgebungsvariable.',
+        help: 'Siehe SETUP.md für Anweisungen zur Konfiguration eines E-Mail-Services.'
       })
     };
 
@@ -91,4 +71,119 @@ exports.handler = async (event, context) => {
     };
   }
 };
+
+// SendGrid verwenden
+async function sendViaSendGrid(to, subject, message, from, apiKey, headers) {
+  const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      personalizations: [{
+        to: [{ email: to }]
+      }],
+      from: { email: from, name: 'E-Mail Assistent' },
+      subject: subject || 'Nachricht von E-Mail Assistent',
+      content: [{
+        type: 'text/plain',
+        value: message
+      }, {
+        type: 'text/html',
+        value: message.replace(/\n/g, '<br>')
+      }]
+    })
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`SendGrid Fehler: ${error}`);
+  }
+
+  return {
+    statusCode: 200,
+    headers,
+    body: JSON.stringify({
+      success: true,
+      provider: 'SendGrid',
+      message: `E-Mail erfolgreich an ${to} gesendet`
+    })
+  };
+}
+
+// Mailgun verwenden
+async function sendViaMailgun(to, subject, message, from, apiKey, domain, headers) {
+  const auth = Buffer.from(`api:${apiKey}`).toString('base64');
+  
+  const formData = new URLSearchParams();
+  formData.append('from', `E-Mail Assistent <${from}>`);
+  formData.append('to', to);
+  formData.append('subject', subject || 'Nachricht von E-Mail Assistent');
+  formData.append('text', message);
+  formData.append('html', message.replace(/\n/g, '<br>'));
+
+  const response = await fetch(`https://api.mailgun.net/v3/${domain}/messages`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Basic ${auth}`,
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: formData
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Mailgun Fehler: ${error}`);
+  }
+
+  return {
+    statusCode: 200,
+    headers,
+    body: JSON.stringify({
+      success: true,
+      provider: 'Mailgun',
+      message: `E-Mail erfolgreich an ${to} gesendet`
+    })
+  };
+}
+
+// SMTP2GO verwenden
+async function sendViaSMTP2GO(to, subject, message, from, apiKey, headers) {
+  const response = await fetch('https://api.smtp2go.com/v3/email/send', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      api_key: apiKey,
+      to: [to],
+      sender: from,
+      subject: subject || 'Nachricht von E-Mail Assistent',
+      text_body: message,
+      html_body: message.replace(/\n/g, '<br>')
+    })
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`SMTP2GO Fehler: ${error}`);
+  }
+
+  const data = await response.json();
+  
+  if (data.data.error_code) {
+    throw new Error(`SMTP2GO Fehler: ${data.data.error}`);
+  }
+
+  return {
+    statusCode: 200,
+    headers,
+    body: JSON.stringify({
+      success: true,
+      provider: 'SMTP2GO',
+      message: `E-Mail erfolgreich an ${to} gesendet`
+    })
+  };
+}
 

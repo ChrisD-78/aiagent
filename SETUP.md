@@ -30,13 +30,14 @@ Nach dem Deployment auf Netlify müssen Sie folgende Umgebungsvariablen konfigur
 
 | Variable | Wert | Beschreibung |
 |----------|------|--------------|
-| `EMAIL_USER` | `laola@baederbook.de` | E-Mail-Adresse |
-| `EMAIL_PASSWORD` | `Ihr-Passwort` | E-Mail-Passwort |
-| `EMAIL_HOST` | `imap.united-domains.de` | IMAP-Server |
-| `EMAIL_PORT` | `993` | IMAP-Port |
-| `SMTP_HOST` | `smtp.united-domains.de` | SMTP-Server (für Versand) |
-| `SMTP_PORT` | `587` | SMTP-Port (für Versand) |
+| `EMAIL_USER` | `laola@baederbook.de` | E-Mail-Adresse (für Empfang + Absender) |
+| `EMAIL_PASSWORD` | `Ihr-Passwort` | E-Mail-Passwort (nur für IMAP-Empfang) |
+| `EMAIL_HOST` | `imap.united-domains.de` | IMAP-Server (für Empfang) |
+| `EMAIL_PORT` | `993` | IMAP-Port (für Empfang) |
 | `OPENAI_API_KEY` | `sk-...` | Ihr OpenAI API-Schlüssel |
+| `SENDGRID_API_KEY` | `SG.xxx...` | SendGrid API-Schlüssel (für Versand) |
+
+**Wichtig für E-Mail-Versand:** Siehe [EMAIL-SERVICE-SETUP.md](EMAIL-SERVICE-SETUP.md) für detaillierte Anleitung zur Einrichtung von SendGrid, Mailgun oder SMTP2GO.
 
 ### Wichtige Hinweise zur Sicherheit
 
@@ -146,18 +147,13 @@ Bei Problemen:
 - **IMAP-Server**: imap.united-domains.de
 - **Port**: 993
 - **Verschlüsselung**: SSL/TLS
-- **Benutzername**: Vollständige E-Mail-Adresse
+- **Benutzername**: Vollständige E-Mail-Adresse (laola@baederbook.de)
 - **Passwort**: Ihr E-Mail-Passwort
 
-### SMTP (Versand):
-- **SMTP-Server**: smtp.united-domains.de
-- **Port**: 587 (STARTTLS) oder 465 (SSL)
-- **Verschlüsselung**: STARTTLS oder SSL/TLS
-- **Benutzername**: Vollständige E-Mail-Adresse
-- **Passwort**: Ihr E-Mail-Passwort
-- **Authentifizierung**: Erforderlich
+Falls IMAP nicht funktioniert, kontaktieren Sie den United Domains Support.
 
-**Hinweis**: Für den automatischen E-Mail-Versand müssen SMTP-Einstellungen in den Netlify-Umgebungsvariablen konfiguriert sein.
+### E-Mail-Versand:
+Für den E-Mail-Versand verwenden wir **nicht** den United Domains SMTP-Server (Netlify blockiert SMTP-Verbindungen), sondern einen API-basierten E-Mail-Service wie SendGrid.
 
-Falls IMAP oder SMTP nicht funktioniert, kontaktieren Sie den United Domains Support.
+**→ Siehe [EMAIL-SERVICE-SETUP.md](EMAIL-SERVICE-SETUP.md) für die komplette Einrichtungsanleitung!**
 
