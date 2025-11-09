@@ -6,6 +6,9 @@ const emailOutput = document.getElementById('emailOutput');
 const loader = document.getElementById('loader');
 const copyBtn = document.getElementById('copyBtn');
 const toast = document.getElementById('toast');
+const recipientEmail = document.getElementById('recipientEmail');
+const sendCustomBtn = document.getElementById('sendCustomBtn');
+const sendAutoBtn = document.getElementById('sendAutoBtn');
 
 // Antwortentwurf generieren
 generateBtn.addEventListener('click', async () => {
@@ -59,14 +62,14 @@ async function generateEmailResponse(emailText) {
 
 // Ergebnis anzeigen
 function displayResult(text) {
-    emailOutput.textContent = text;
+    emailOutput.value = text;
     resultCard.style.display = 'block';
     resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 // In Zwischenablage kopieren
 copyBtn.addEventListener('click', async () => {
-    const text = emailOutput.textContent;
+    const text = emailOutput.value;
     try {
         await navigator.clipboard.writeText(text);
         showToast('In Zwischenablage kopiert', 'success');
@@ -78,6 +81,77 @@ copyBtn.addEventListener('click', async () => {
         showToast('Kopieren fehlgeschlagen', 'error');
     }
 });
+
+// E-Mail an benutzerdefinierte Adresse senden
+sendCustomBtn.addEventListener('click', async () => {
+    const recipient = recipientEmail.value.trim();
+    const message = emailOutput.value.trim();
+
+    if (!recipient) {
+        showToast('Bitte geben Sie eine E-Mail-Adresse ein', 'error');
+        recipientEmail.focus();
+        return;
+    }
+
+    if (!message) {
+        showToast('Keine Nachricht zum Senden vorhanden', 'error');
+        return;
+    }
+
+    await sendEmail(recipient, message, sendCustomBtn);
+});
+
+// E-Mail automatisch an christof.drost@landau.de senden
+sendAutoBtn.addEventListener('click', async () => {
+    const message = emailOutput.value.trim();
+
+    if (!message) {
+        showToast('Keine Nachricht zum Senden vorhanden', 'error');
+        return;
+    }
+
+    await sendEmail('christof.drost@landau.de', message, sendAutoBtn);
+});
+
+// E-Mail-Versand-Funktion
+async function sendEmail(to, message, button) {
+    const originalHTML = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = '<span>⏳</span> Wird gesendet...';
+
+    try {
+        const response = await fetch('/.netlify/functions/send-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                to: to,
+                subject: 'Antwort von E-Mail Assistent',
+                message: message
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Fehler beim E-Mail-Versand');
+        }
+
+        const data = await response.json();
+        showToast(`E-Mail erfolgreich an ${to} gesendet! ✅`, 'success');
+        button.innerHTML = '<span>✓</span> Gesendet';
+        
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.disabled = false;
+        }, 3000);
+    } catch (error) {
+        console.error('Fehler beim E-Mail-Versand:', error);
+        showToast(`Fehler beim Senden: ${error.message}`, 'error');
+        button.innerHTML = originalHTML;
+        button.disabled = false;
+    }
+}
 
 // Toast Benachrichtigung anzeigen
 function showToast(message, type = 'info') {

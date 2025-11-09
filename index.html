@@ -43,7 +43,36 @@
                         <span>📋</span> Kopieren
                     </button>
                 </div>
-                <div id="emailOutput" class="email-output"></div>
+                <textarea id="emailOutput" class="email-output-editable" rows="10"></textarea>
+                
+                <div class="send-section">
+                    <div class="send-group">
+                        <label for="recipientEmail" class="send-label">
+                            <span>📤</span>
+                            Antwort senden an:
+                        </label>
+                        <div class="send-input-group">
+                            <input 
+                                type="email" 
+                                id="recipientEmail" 
+                                placeholder="empfaenger@beispiel.de"
+                                class="recipient-input"
+                            >
+                            <button id="sendCustomBtn" class="btn-send">
+                                <span>📧</span> Senden
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="divider">
+                        <span>oder</span>
+                    </div>
+                    
+                    <button id="sendAutoBtn" class="btn-auto-send">
+                        <span>⚡</span>
+                        Automatisch senden an christof.drost@landau.de
+                    </button>
+                </div>
             </div>
 
             <div class="loader" id="loader" style="display: none;">

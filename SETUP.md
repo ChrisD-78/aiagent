@@ -34,6 +34,8 @@ Nach dem Deployment auf Netlify müssen Sie folgende Umgebungsvariablen konfigur
 | `EMAIL_PASSWORD` | `Ihr-Passwort` | E-Mail-Passwort |
 | `EMAIL_HOST` | `imap.united-domains.de` | IMAP-Server |
 | `EMAIL_PORT` | `993` | IMAP-Port |
+| `SMTP_HOST` | `smtp.united-domains.de` | SMTP-Server (für Versand) |
+| `SMTP_PORT` | `587` | SMTP-Port (für Versand) |
 | `OPENAI_API_KEY` | `sk-...` | Ihr OpenAI API-Schlüssel |
 
 ### Wichtige Hinweise zur Sicherheit
@@ -138,15 +140,24 @@ Bei Problemen:
 3. Prüfen Sie alle Umgebungsvariablen
 4. Stellen Sie sicher, dass Ihr OpenAI-Guthaben ausreicht
 
-## 📞 United Domains IMAP-Einstellungen
+## 📞 United Domains E-Mail-Einstellungen
 
-Offiziell dokumentierte Einstellungen:
-
+### IMAP (Empfang):
 - **IMAP-Server**: imap.united-domains.de
 - **Port**: 993
 - **Verschlüsselung**: SSL/TLS
 - **Benutzername**: Vollständige E-Mail-Adresse
 - **Passwort**: Ihr E-Mail-Passwort
 
-Falls IMAP nicht funktioniert, kontaktieren Sie den United Domains Support.
+### SMTP (Versand):
+- **SMTP-Server**: smtp.united-domains.de
+- **Port**: 587 (STARTTLS) oder 465 (SSL)
+- **Verschlüsselung**: STARTTLS oder SSL/TLS
+- **Benutzername**: Vollständige E-Mail-Adresse
+- **Passwort**: Ihr E-Mail-Passwort
+- **Authentifizierung**: Erforderlich
+
+**Hinweis**: Für den automatischen E-Mail-Versand müssen SMTP-Einstellungen in den Netlify-Umgebungsvariablen konfiguriert sein.
+
+Falls IMAP oder SMTP nicht funktioniert, kontaktieren Sie den United Domains Support.
 
