@@ -105,37 +105,82 @@ exports.handler = async (event, context) => {
 // E-Mails per IMAP abrufen
 function fetchEmails(config) {
   return new Promise((resolve, reject) => {
-    const imap = new Imap(config);
+    const imap = new Imap({
+      ...config,
+      connTimeout: 30000,      // 30 Sekunden Connection Timeout
+      authTimeout: 30000,       // 30 Sekunden Auth Timeout
+      keepalive: false          // Keepalive deaktivieren für schnellere Verbindung
+    });
+    
     const emails = [];
+    let connectionTimeout;
+    let processingComplete = false;
+
+    // Globaler Timeout (45 Sekunden)
+    const globalTimeout = setTimeout(() => {
+      if (!processingComplete) {
+        console.error('Global timeout reached');
+        try {
+          imap.end();
+        } catch (e) {
+          console.error('Error ending IMAP connection:', e);
+        }
+        reject(new Error('IMAP-Verbindung: Zeitüberschreitung (45s). Möglicherweise blockiert Ihr Hosting-Provider IMAP-Verbindungen oder der Server ist langsam.'));
+      }
+    }, 45000);
 
     imap.once('ready', () => {
-      imap.openBox('INBOX', false, (err, box) => {
+      clearTimeout(connectionTimeout);
+      console.log('IMAP connected successfully');
+      
+      imap.openBox('INBOX', true, (err, box) => {  // true = read-only
         if (err) {
+          clearTimeout(globalTimeout);
+          processingComplete = true;
           reject(err);
           return;
         }
 
+        console.log('INBOX opened, total messages:', box.messages.total);
+
         // Hole nur ungelesene E-Mails der letzten 7 Tage
-        const searchCriteria = ['UNSEEN', ['SINCE', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)]];
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        const searchCriteria = ['UNSEEN', ['SINCE', sevenDaysAgo]];
         
         imap.search(searchCriteria, (err, results) => {
           if (err) {
+            clearTimeout(globalTimeout);
+            processingComplete = true;
+            imap.end();
             reject(err);
             return;
           }
 
+          console.log('Found unread messages:', results.length);
+
           if (results.length === 0) {
+            clearTimeout(globalTimeout);
+            processingComplete = true;
             imap.end();
             resolve([]);
             return;
           }
 
-          // Limitiere auf maximal 10 E-Mails pro Abruf
-          const limitedResults = results.slice(0, 10);
-          const f = imap.fetch(limitedResults, { bodies: '' });
+          // Limitiere auf maximal 5 E-Mails pro Abruf (wegen Timeout)
+          const limitedResults = results.slice(0, 5);
+          console.log('Processing messages:', limitedResults.length);
+          
+          const f = imap.fetch(limitedResults, { 
+            bodies: '',
+            struct: true
+          });
+
+          let messagesProcessed = 0;
+          const totalMessages = limitedResults.length;
 
           f.on('message', (msg, seqno) => {
             let buffer = '';
+            
             msg.on('body', (stream, info) => {
               stream.on('data', (chunk) => {
                 buffer += chunk.toString('utf8');
@@ -144,42 +189,89 @@ function fetchEmails(config) {
 
             msg.once('end', () => {
               simpleParser(buffer, (err, parsed) => {
+                messagesProcessed++;
+                
                 if (err) {
                   console.error('Parse-Fehler:', err);
-                  return;
+                } else {
+                  emails.push({
+                    id: seqno,
+                    from: parsed.from?.text || 'Unbekannt',
+                    subject: parsed.subject || 'Kein Betreff',
+                    date: parsed.date || new Date(),
+                    text: parsed.text || parsed.html || ''
+                  });
                 }
 
-                emails.push({
-                  id: seqno,
-                  from: parsed.from?.text || 'Unbekannt',
-                  subject: parsed.subject || 'Kein Betreff',
-                  date: parsed.date || new Date(),
-                  text: parsed.text || parsed.html || ''
-                });
+                // Wenn alle Nachrichten verarbeitet wurden
+                if (messagesProcessed === totalMessages) {
+                  clearTimeout(globalTimeout);
+                  processingComplete = true;
+                  imap.end();
+                }
               });
             });
           });
 
           f.once('error', (err) => {
+            clearTimeout(globalTimeout);
+            processingComplete = true;
+            console.error('Fetch error:', err);
+            imap.end();
             reject(err);
           });
 
           f.once('end', () => {
-            imap.end();
+            console.log('Fetch complete');
+            // Warte kurz auf Parser
+            setTimeout(() => {
+              if (!processingComplete) {
+                clearTimeout(globalTimeout);
+                processingComplete = true;
+                imap.end();
+              }
+            }, 2000);
           });
         });
       });
     });
 
     imap.once('error', (err) => {
-      reject(err);
+      clearTimeout(connectionTimeout);
+      clearTimeout(globalTimeout);
+      processingComplete = true;
+      console.error('IMAP error:', err);
+      reject(new Error(`IMAP-Fehler: ${err.message}. Bitte prüfen Sie Ihre E-Mail-Zugangsdaten (EMAIL_USER, EMAIL_PASSWORD, EMAIL_HOST).`));
     });
 
     imap.once('end', () => {
+      clearTimeout(globalTimeout);
+      processingComplete = true;
+      console.log('IMAP connection ended, emails collected:', emails.length);
       resolve(emails);
     });
 
-    imap.connect();
+    // Connection Timeout (10 Sekunden für Connect)
+    connectionTimeout = setTimeout(() => {
+      if (!imap._box) {
+        console.error('Connection timeout');
+        try {
+          imap.end();
+        } catch (e) {
+          console.error('Error ending IMAP connection:', e);
+        }
+        reject(new Error('IMAP-Verbindung konnte nicht hergestellt werden. Mögliche Ursachen: 1) Falscher Server/Port, 2) Firewall-Blockierung, 3) Falsche Zugangsdaten. Aktuelle Einstellungen: ' + config.host + ':' + config.port));
+      }
+    }, 10000);
+
+    console.log('Connecting to IMAP server:', config.host + ':' + config.port);
+    try {
+      imap.connect();
+    } catch (err) {
+      clearTimeout(connectionTimeout);
+      clearTimeout(globalTimeout);
+      reject(err);
+    }
   });
 }
 
