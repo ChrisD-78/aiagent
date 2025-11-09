@@ -5,11 +5,29 @@ Eine moderne, mobiloptimierte Web-App für professionelle deutschsprachige Gesch
 ## ✨ Features
 
 - 🎯 **Intelligente Analyse**: Erkennt automatisch den Ton und Stil der eingehenden E-Mail
+- 📬 **Automatischer E-Mail-Abruf**: Holt automatisch E-Mails per IMAP (z.B. von United Domains)
+- 🤖 **KI-gestützte Antworten**: Generiert professionelle Antwortentwürfe mit OpenAI GPT-4
+- 📊 **Dashboard**: Übersicht über alle eingehenden E-Mails und deren Antworten
 - 📱 **Mobile-First**: Optimiert für Smartphone-Nutzung
 - 🎨 **Modernes Design**: Ansprechendes, intuitives Interface
-- 🔒 **Datenschutz**: API-Schlüssel werden nur lokal gespeichert
+- 🔒 **Datenschutz**: Sichere Verarbeitung mit Netlify Functions
 - 🌓 **Dark Mode**: Automatische Anpassung an System-Einstellungen
-- ⚡ **Schnell**: Keine Backend-Server erforderlich
+- ⚡ **Schnell**: Serverless-Architektur für beste Performance
+
+## 🎭 Zwei Modi
+
+### 1. Manueller Modus (`index.html`)
+Perfekt zum schnellen Testen oder für einzelne E-Mails:
+- E-Mail manuell einfügen
+- Sofort Antwortentwurf erhalten
+- Keine E-Mail-Konfiguration nötig
+
+### 2. Automatischer Modus (`dashboard.html`)
+Für die Integration mit Ihrem E-Mail-Postfach:
+- Automatischer IMAP-Abruf
+- Verarbeitet alle ungelesenen E-Mails
+- Dashboard mit Übersicht
+- Ein-Klick-Kopieren der Antworten
 
 ## 🚀 Lokale Installation
 
@@ -92,10 +110,18 @@ netlify deploy --prod
 
 ## 💡 Verwendung
 
+### Manueller Modus
 1. **API-Schlüssel eingeben**: Fügen Sie Ihren OpenAI API-Schlüssel ein (wird automatisch gespeichert)
 2. **E-Mail einfügen**: Kopieren Sie die eingehende E-Mail in das Textfeld
 3. **Generieren**: Klicken Sie auf "Antwortentwurf erstellen" oder drücken Sie Strg/Cmd + Enter
 4. **Kopieren**: Nutzen Sie den "Kopieren"-Button, um den Entwurf in Ihre E-Mail-App zu übertragen
+
+### Automatischer Modus (Dashboard)
+1. **Konfiguration**: Siehe [SETUP.md](SETUP.md) für detaillierte Anweisungen
+2. **E-Mail-Zugangsdaten**: Konfigurieren Sie Ihre E-Mail-Zugangsdaten in Netlify
+3. **Dashboard öffnen**: Navigieren Sie zu `/dashboard.html`
+4. **E-Mails abrufen**: Klicken Sie auf "E-Mails abrufen"
+5. **Antworten nutzen**: Alle generierten Antworten werden übersichtlich angezeigt
 
 ## 🛠️ Technologie-Stack
 
