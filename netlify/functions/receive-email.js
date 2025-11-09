@@ -90,10 +90,19 @@ exports.handler = async (event, context) => {
       
       console.log('Response generated successfully');
       
-      // Hier könnten wir die E-Mail + Antwort in einer Datenbank speichern
-      // Für jetzt loggen wir sie nur
+      // Sende Benachrichtigungs-E-Mail
+      const sendgridKey = process.env.SENDGRID_API_KEY;
+      const notificationEmail = 'christof.drost@landau.de';
       
-      // Optional: Speichere in einer externen Datenbank oder sende Benachrichtigung
+      if (sendgridKey) {
+        try {
+          await sendNotificationEmail(from, subject, text, response, notificationEmail, sendgridKey);
+          console.log('Notification email sent successfully');
+        } catch (emailError) {
+          console.error('Error sending notification email:', emailError);
+          // Weiter machen, auch wenn Benachrichtigung fehlschlägt
+        }
+      }
       
       return {
         statusCode: 200,
@@ -142,6 +151,110 @@ function parseFormData(body) {
   }
   
   return result;
+}
+
+// Benachrichtigungs-E-Mail senden
+async function sendNotificationEmail(originalFrom, originalSubject, originalText, generatedResponse, notificationEmail, sendgridKey) {
+  const emailBody = `
+Neue E-Mail wurde automatisch verarbeitet!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EINGEHENDE E-MAIL:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Von: ${originalFrom}
+Betreff: ${originalSubject}
+
+Nachricht:
+${originalText.substring(0, 500)}${originalText.length > 500 ? '...\n[Gekürzt]' : ''}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GENERIERTER ANTWORTENTWURF:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${generatedResponse}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Sie können diese Antwort kopieren und verwenden oder über die Web-App senden:
+https://cdagent.netlify.app/
+
+E-Mail-Assistent | Powered by OpenAI GPT-4
+`;
+
+  const htmlBody = `
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+    .section { background: #f8fafc; border-left: 4px solid #2563eb; padding: 20px; margin: 20px 0; border-radius: 5px; }
+    .response-section { background: #f0f9ff; border-left: 4px solid #10b981; padding: 20px; margin: 20px 0; border-radius: 5px; }
+    .original-email { background: white; padding: 15px; border-radius: 5px; margin-top: 10px; border: 1px solid #e2e8f0; }
+    .response-text { background: white; padding: 15px; border-radius: 5px; margin-top: 10px; white-space: pre-wrap; border: 1px solid #e2e8f0; }
+    .footer { text-align: center; color: #64748b; font-size: 0.9rem; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
+    .button { display: inline-block; background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin-top: 15px; }
+    h2 { color: #1e293b; margin-top: 0; }
+    .label { font-weight: 600; color: #475569; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1 style="margin: 0;">📧 Neue E-Mail verarbeitet</h1>
+    <p style="margin: 10px 0 0 0; opacity: 0.9;">Ihr E-Mail-Assistent hat eine Antwort generiert</p>
+  </div>
+
+  <div class="section">
+    <h2>📨 Eingehende E-Mail</h2>
+    <div class="original-email">
+      <p><span class="label">Von:</span> ${originalFrom}</p>
+      <p><span class="label">Betreff:</span> ${originalSubject}</p>
+      <p><span class="label">Nachricht:</span></p>
+      <p style="white-space: pre-wrap;">${originalText.substring(0, 500)}${originalText.length > 500 ? '...<br><em>[Gekürzt]</em>' : ''}</p>
+    </div>
+  </div>
+
+  <div class="response-section">
+    <h2>✉️ Generierter Antwortentwurf</h2>
+    <div class="response-text">${generatedResponse}</div>
+    <a href="https://cdagent.netlify.app/" class="button">📤 Antwort in der App öffnen</a>
+  </div>
+
+  <div class="footer">
+    <p>E-Mail-Assistent | Powered by OpenAI GPT-4 & CloudMailin</p>
+    <p style="font-size: 0.8rem; margin-top: 10px;">Diese Benachrichtigung wurde automatisch generiert</p>
+  </div>
+</body>
+</html>
+`;
+
+  const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${sendgridKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      personalizations: [{
+        to: [{ email: notificationEmail }]
+      }],
+      from: { email: 'laola@baederbook.de', name: 'E-Mail Assistent' },
+      subject: `📧 Neue E-Mail von ${originalFrom}`,
+      content: [{
+        type: 'text/plain',
+        value: emailBody
+      }, {
+        type: 'text/html',
+        value: htmlBody
+      }]
+    })
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`SendGrid Fehler: ${error}`);
+  }
 }
 
 // OpenAI Antwort generieren
