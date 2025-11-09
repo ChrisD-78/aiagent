@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 
 // SendGrid Inbound Parse Webhook
 exports.handler = async (event, context) => {
-  console.log('Received email webhook from SendGrid');
+  console.log('Received email webhook');
 
   // CORS Headers
   const headers = {
@@ -28,30 +28,41 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // SendGrid sendet die E-Mail als multipart/form-data
-    // Das body ist entweder form-encoded oder enthält die E-Mail-Daten
-    
     const body = event.body;
     const isBase64 = event.isBase64Encoded;
+    const contentType = event.headers['content-type'] || '';
     
     let parsedBody;
+    let from, subject, text, to;
     
-    // Parse form data
-    if (body) {
-      // Decode wenn Base64
+    // CloudMailin sendet JSON, SendGrid sendet form-data
+    if (contentType.includes('application/json')) {
+      // CloudMailin Format (JSON)
+      console.log('Parsing as CloudMailin JSON');
       const decodedBody = isBase64 ? Buffer.from(body, 'base64').toString('utf-8') : body;
+      parsedBody = JSON.parse(decodedBody);
       
-      // Parse URL-encoded form data
+      // CloudMailin Structure
+      from = parsedBody.envelope?.from || parsedBody.headers?.from || 'Unbekannt';
+      subject = parsedBody.headers?.subject || 'Kein Betreff';
+      text = parsedBody.plain || parsedBody.html || '';
+      to = parsedBody.envelope?.to || '';
+      
+      console.log('CloudMailin email received');
+    } else {
+      // SendGrid Format (form-data)
+      console.log('Parsing as SendGrid form-data');
+      const decodedBody = isBase64 ? Buffer.from(body, 'base64').toString('utf-8') : body;
       parsedBody = parseFormData(decodedBody);
       
-      console.log('Parsed form fields:', Object.keys(parsedBody));
+      // SendGrid Structure
+      from = parsedBody.from || 'Unbekannt';
+      subject = parsedBody.subject || 'Kein Betreff';
+      text = parsedBody.text || parsedBody.html || '';
+      to = parsedBody.to || '';
+      
+      console.log('SendGrid email received');
     }
-
-    // SendGrid sendet verschiedene Felder
-    const from = parsedBody.from || 'Unbekannt';
-    const subject = parsedBody.subject || 'Kein Betreff';
-    const text = parsedBody.text || parsedBody.html || '';
-    const to = parsedBody.to || '';
     
     console.log(`Email received - From: ${from}, Subject: ${subject}, To: ${to}`);
 
