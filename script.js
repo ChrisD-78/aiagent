@@ -171,3 +171,105 @@ emailInput.addEventListener('keydown', (e) => {
     }
 });
 
+// ====================================
+// Sprachsteuerung
+// ====================================
+
+// E-Mail diktieren
+const voiceDictateBtn = document.getElementById('voiceDictateBtn');
+if (voiceDictateBtn && voiceAssistant.isAvailable()) {
+    voiceDictateBtn.addEventListener('click', () => {
+        if (voiceAssistant.isListening) {
+            voiceAssistant.stopListening();
+            voiceDictateBtn.classList.remove('listening');
+            voiceDictateBtn.textContent = '🎤 Diktieren';
+            return;
+        }
+
+        voiceAssistant.startListening('dictate', {
+            onStart: () => {
+                voiceDictateBtn.classList.add('listening');
+                voiceDictateBtn.textContent = '⏺️ Höre zu...';
+                showToast('Sprechen Sie jetzt...', 'info');
+            },
+            onResult: (transcript) => {
+                // Text zum bestehenden Inhalt hinzufügen oder ersetzen
+                const currentText = emailInput.value;
+                if (currentText.trim()) {
+                    emailInput.value = currentText + '\n\n' + transcript;
+                } else {
+                    emailInput.value = transcript;
+                }
+                showToast('Text erfolgreich diktiert', 'success');
+            },
+            onEnd: () => {
+                voiceDictateBtn.classList.remove('listening');
+                voiceDictateBtn.textContent = '🎤 Diktieren';
+            },
+            onError: (error) => {
+                voiceDictateBtn.classList.remove('listening');
+                voiceDictateBtn.textContent = '🎤 Diktieren';
+            }
+        });
+    });
+} else if (voiceDictateBtn && !voiceAssistant.isAvailable()) {
+    voiceDictateBtn.disabled = true;
+    voiceDictateBtn.title = 'Spracherkennung nicht verfügbar in diesem Browser';
+    voiceDictateBtn.style.opacity = '0.5';
+}
+
+// Sprachbefehle
+const voiceCommandBtn = document.getElementById('voiceCommandBtn');
+if (voiceCommandBtn && voiceAssistant.isAvailable()) {
+    voiceCommandBtn.addEventListener('click', () => {
+        if (voiceAssistant.isListening) {
+            voiceAssistant.stopListening();
+            voiceCommandBtn.classList.remove('listening');
+            voiceCommandBtn.innerHTML = '🎤 Sprachbefehl';
+            return;
+        }
+
+        voiceAssistant.startListening('command', {
+            onStart: () => {
+                voiceCommandBtn.classList.add('listening');
+                voiceCommandBtn.innerHTML = '⏺️ Höre zu...';
+                showToast('Sagen Sie einen Befehl... (z.B. "Antwort erstellen")', 'info');
+                
+                // Nach 3 Sekunden Hilfetext sprechen, falls noch nichts passiert ist
+                setTimeout(() => {
+                    if (voiceAssistant.isListening) {
+                        voiceAssistant.speak('Bitte sagen Sie einen Befehl');
+                    }
+                }, 3000);
+            },
+            onEnd: () => {
+                voiceCommandBtn.classList.remove('listening');
+                voiceCommandBtn.innerHTML = '🎤 Sprachbefehl';
+            },
+            onError: (error) => {
+                voiceCommandBtn.classList.remove('listening');
+                voiceCommandBtn.innerHTML = '🎤 Sprachbefehl';
+            }
+        });
+    });
+} else if (voiceCommandBtn && !voiceAssistant.isAvailable()) {
+    voiceCommandBtn.disabled = true;
+    voiceCommandBtn.title = 'Spracherkennung nicht verfügbar in diesem Browser';
+    voiceCommandBtn.style.opacity = '0.5';
+}
+
+// Tastenkürzel für Sprachsteuerung
+document.addEventListener('keydown', (e) => {
+    // Strg/Cmd + M für Diktat
+    if ((e.ctrlKey || e.metaKey) && e.key === 'm') {
+        e.preventDefault();
+        voiceDictateBtn?.click();
+    }
+    
+    // Strg/Cmd + K für Sprachbefehl
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        voiceCommandBtn?.click();
+    }
+});
+

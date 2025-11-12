@@ -15,22 +15,32 @@
 
         <main>
             <div class="card">
-                <label for="emailInput">
-                    <span class="label-icon">📨</span>
-                    Eingehende E-Mail
-                </label>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <label for="emailInput" style="margin-bottom: 0;">
+                        <span class="label-icon">📨</span>
+                        Eingehende E-Mail
+                    </label>
+                    <button id="voiceDictateBtn" class="voice-btn" title="E-Mail diktieren">
+                        🎤 Diktieren
+                    </button>
+                </div>
                 <textarea 
                     id="emailInput" 
-                    placeholder="Fügen Sie hier die eingehende E-Mail ein, auf die Sie antworten möchten..."
+                    placeholder="Fügen Sie hier die eingehende E-Mail ein, auf die Sie antworten möchten... Oder klicken Sie auf 'Diktieren' zum Sprechen"
                     rows="8"
                 ></textarea>
             </div>
 
             <div class="action-section">
-                <button id="generateBtn" class="btn-primary">
-                    <span class="btn-icon">✨</span>
-                    Antwortentwurf erstellen
-                </button>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button id="generateBtn" class="btn-primary" style="flex: 1; min-width: 200px;">
+                        <span class="btn-icon">✨</span>
+                        Antwortentwurf erstellen
+                    </button>
+                    <button id="voiceCommandBtn" class="voice-command-btn" title="Sprachbefehl geben">
+                        🎤 Sprachbefehl
+                    </button>
+                </div>
             </div>
 
             <div class="card result-card" id="resultCard" style="display: none;">
@@ -91,6 +101,7 @@
 
     <div class="toast" id="toast"></div>
 
+    <script src="voice.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

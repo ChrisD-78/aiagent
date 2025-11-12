@@ -468,6 +468,70 @@ footer {
     background: var(--danger-color);
 }
 
+/* Voice Control Buttons */
+.voice-btn {
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.voice-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+}
+
+.voice-btn.listening {
+    animation: pulse 1.5s ease-in-out infinite;
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.voice-command-btn {
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    color: #333;
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: var(--shadow);
+}
+
+.voice-command-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.voice-command-btn.listening {
+    animation: pulse 1.5s ease-in-out infinite;
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+}
+
 /* Mobile Optimierungen */
 @media (max-width: 640px) {
     body {
