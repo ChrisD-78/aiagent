@@ -320,7 +320,13 @@ textarea:focus {
     border-radius: 0.75rem;
     font-size: 1rem;
     transition: all 0.3s ease;
-    background: var(--bg-color);
+    background: #ffffff;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+}
+
+.recipient-input::placeholder {
+    color: rgba(0, 0, 0, 0.5);
 }
 
 .recipient-input:focus {
@@ -328,6 +334,7 @@ textarea:focus {
     border-color: var(--primary-color);
     background: white;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    color: #000000 !important;
 }
 
 .btn-send {
