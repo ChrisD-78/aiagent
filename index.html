@@ -3,111 +3,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Mail Assistent</title>
+    <title>KI-Assistent für Business</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .hero-section {
+            text-align: center;
+            padding: 3rem 1rem 2rem;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: white;
+            opacity: 0.95;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1rem 3rem;
+        }
+
+        .app-card {
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid transparent;
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .app-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary-color);
+        }
+
+        .app-card:hover::before {
+            opacity: 1;
+        }
+
+        .app-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-card:nth-child(1) .app-icon {
+            animation-delay: 0s;
+        }
+
+        .app-card:nth-child(2) .app-icon {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .app-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-description {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-features li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .app-features li::before {
+            content: '✓';
+            color: var(--success-color);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .app-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .features-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin: 0 1rem 2rem;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .feature-text h3 {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-color);
+            font-size: 1.1rem;
+        }
+
+        .feature-text p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 640px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .app-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .app-icon {
+                font-size: 4rem;
+            }
+
+            .app-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>📧 E-Mail Assistent</h1>
-            <p class="subtitle">Professionelle Antwortentwürfe für Ihre Geschäftskommunikation</p>
-        </header>
+        <div class="hero-section">
+            <h1 class="hero-title">🤖 KI-Assistent für Business</h1>
+            <p class="hero-subtitle">Professionelle E-Mail-Bearbeitung und Meeting-Protokollierung</p>
+        </div>
 
-        <main>
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                    <label for="emailInput" style="margin-bottom: 0;">
-                        <span class="label-icon">📨</span>
-                        Eingehende E-Mail
-                    </label>
-                    <button id="voiceDictateBtn" class="voice-btn" title="E-Mail diktieren">
-                        🎤 Diktieren
-                    </button>
-                </div>
-                <textarea 
-                    id="emailInput" 
-                    placeholder="Fügen Sie hier die eingehende E-Mail ein, auf die Sie antworten möchten... Oder klicken Sie auf 'Diktieren' zum Sprechen"
-                    rows="8"
-                ></textarea>
-            </div>
+        <div class="app-grid">
+            <!-- E-Mail Assistent -->
+            <a href="email.html" class="app-card">
+                <div class="app-icon">📧</div>
+                <h2 class="app-title">E-Mail Assistent</h2>
+                <p class="app-description">
+                    Intelligente E-Mail-Bearbeitung mit KI-Unterstützung für professionelle Geschäftskommunikation
+                </p>
+                <ul class="app-features">
+                    <li>Automatische Antworterstellung</li>
+                    <li>Sprachsteuerung & Diktat</li>
+                    <li>Direkter E-Mail-Versand</li>
+                    <li>24/7 automatische Verarbeitung</li>
+                </ul>
+                <div class="app-badge">✨ Powered by GPT-4</div>
+            </a>
 
-            <div class="action-section">
-                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                    <button id="generateBtn" class="btn-primary" style="flex: 1; min-width: 200px;">
-                        <span class="btn-icon">✨</span>
-                        Antwortentwurf erstellen
-                    </button>
-                    <button id="voiceCommandBtn" class="voice-command-btn" title="Sprachbefehl geben">
-                        🎤 Sprachbefehl
-                    </button>
-                </div>
-            </div>
+            <!-- Meeting Protokoll -->
+            <a href="meeting.html" class="app-card">
+                <div class="app-icon">🎙️</div>
+                <h2 class="app-title">Meeting-Protokoll</h2>
+                <p class="app-description">
+                    Nehmen Sie Meetings auf und lassen Sie automatisch professionelle Protokolle erstellen
+                </p>
+                <ul class="app-features">
+                    <li>Audio-Aufnahme im Browser</li>
+                    <li>Automatische Transkription</li>
+                    <li>KI-Protokollerstellung</li>
+                    <li>Bearbeitbar & versendbar</li>
+                </ul>
+                <div class="app-badge">🎤 Mit Whisper AI</div>
+            </a>
+        </div>
 
-            <div class="card result-card" id="resultCard" style="display: none;">
-                <div class="result-header">
-                    <label>
-                        <span class="label-icon">✉️</span>
-                        Ihr Antwortentwurf
-                    </label>
-                    <button id="copyBtn" class="btn-secondary" title="In Zwischenablage kopieren">
-                        <span>📋</span> Kopieren
-                    </button>
-                </div>
-                <textarea id="emailOutput" class="email-output-editable" rows="10"></textarea>
-                
-                <div class="send-section">
-                    <div class="send-group">
-                        <label for="recipientEmail" class="send-label">
-                            <span>📤</span>
-                            Antwort senden an:
-                        </label>
-                        <div class="send-input-group">
-                            <input 
-                                type="email" 
-                                id="recipientEmail" 
-                                placeholder="empfaenger@beispiel.de"
-                                class="recipient-input"
-                            >
-                            <button id="sendCustomBtn" class="btn-send">
-                                <span>📧</span> Senden
-                            </button>
-                        </div>
+        <!-- Features Overview -->
+        <div class="features-section">
+            <h2 style="color: var(--text-color); text-align: center; margin-bottom: 1.5rem;">
+                🌟 Alles in einer App
+            </h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🤖</div>
+                    <div class="feature-text">
+                        <h3>KI-gestützt</h3>
+                        <p>OpenAI GPT-4 für höchste Qualität</p>
                     </div>
-                    
-                    <div class="divider">
-                        <span>oder</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-text">
+                        <h3>Mobiloptimiert</h3>
+                        <p>Funktioniert perfekt auf allen Geräten</p>
                     </div>
-                    
-                    <button id="sendAutoBtn" class="btn-auto-send">
-                        <span>⚡</span>
-                        Automatisch senden an christof.drost@landau.de
-                    </button>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🎤</div>
+                    <div class="feature-text">
+                        <h3>Sprachsteuerung</h3>
+                        <p>Diktat und Sprachbefehle</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-text">
+                        <h3>Sicher & Privat</h3>
+                        <p>Ihre Daten bleiben geschützt</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-text">
+                        <h3>Blitzschnell</h3>
+                        <p>Serverless-Architektur</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💰</div>
+                    <div class="feature-text">
+                        <h3>Kosteneffizient</h3>
+                        <p>Nutzt kostenlose Tiers</p>
+                    </div>
                 </div>
             </div>
-
-            <div class="loader" id="loader" style="display: none;">
-                <div class="spinner"></div>
-                <p>Antwortentwurf wird erstellt...</p>
-            </div>
-        </main>
+        </div>
 
         <footer>
             <p>Entwickelt für professionelle deutschsprachige Geschäftskommunikation</p>
             <p style="margin-top: 0.5rem; font-size: 0.875rem; opacity: 0.9;">
                 💡 E-Mails an laola@baederbook.de werden automatisch verarbeitet
             </p>
-            <p style="margin-top: 0.75rem; font-size: 0.875rem;">
-                <a href="meeting.html" style="color: white; opacity: 0.9; text-decoration: underline;">
-                    🎙️ Meeting-Protokoll erstellen
-                </a>
-            </p>
         </footer>
     </div>
-
-    <div class="toast" id="toast"></div>
-
-    <script src="voice.js"></script>
-    <script src="script.js"></script>
 </body>
 </html>
 

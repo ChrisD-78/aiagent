@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Mail Assistent</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📧 E-Mail Assistent</h1>
+            <p class="subtitle">Professionelle Antwortentwürfe für Ihre Geschäftskommunikation</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <label for="emailInput" style="margin-bottom: 0;">
+                        <span class="label-icon">📨</span>
+                        Eingehende E-Mail
+                    </label>
+                    <button id="voiceDictateBtn" class="voice-btn" title="E-Mail diktieren">
+                        🎤 Diktieren
+                    </button>
+                </div>
+                <textarea 
+                    id="emailInput" 
+                    placeholder="Fügen Sie hier die eingehende E-Mail ein, auf die Sie antworten möchten... Oder klicken Sie auf 'Diktieren' zum Sprechen"
+                    rows="8"
+                ></textarea>
+            </div>
+
+            <div class="action-section">
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button id="generateBtn" class="btn-primary" style="flex: 1; min-width: 200px;">
+                        <span class="btn-icon">✨</span>
+                        Antwortentwurf erstellen
+                    </button>
+                    <button id="voiceCommandBtn" class="voice-command-btn" title="Sprachbefehl geben">
+                        🎤 Sprachbefehl
+                    </button>
+                </div>
+            </div>
+
+            <div class="card result-card" id="resultCard" style="display: none;">
+                <div class="result-header">
+                    <label>
+                        <span class="label-icon">✉️</span>
+                        Ihr Antwortentwurf
+                    </label>
+                    <button id="copyBtn" class="btn-secondary" title="In Zwischenablage kopieren">
+                        <span>📋</span> Kopieren
+                    </button>
+                </div>
+                <textarea id="emailOutput" class="email-output-editable" rows="10"></textarea>
+                
+                <div class="send-section">
+                    <div class="send-group">
+                        <label for="recipientEmail" class="send-label">
+                            <span>📤</span>
+                            Antwort senden an:
+                        </label>
+                        <div class="send-input-group">
+                            <input 
+                                type="email" 
+                                id="recipientEmail" 
+                                placeholder="empfaenger@beispiel.de"
+                                class="recipient-input"
+                            >
+                            <button id="sendCustomBtn" class="btn-send">
+                                <span>📧</span> Senden
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="divider">
+                        <span>oder</span>
+                    </div>
+                    
+                    <button id="sendAutoBtn" class="btn-auto-send">
+                        <span>⚡</span>
+                        Automatisch senden an christof.drost@landau.de
+                    </button>
+                </div>
+            </div>
+
+            <div class="loader" id="loader" style="display: none;">
+                <div class="spinner"></div>
+                <p>Antwortentwurf wird erstellt...</p>
+            </div>
+        </main>
+
+        <footer>
+            <p>
+                <a href="index.html" style="color: white; opacity: 0.9; text-decoration: underline; font-weight: 600;">
+                    ← Zurück zur Startseite
+                </a>
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.875rem; opacity: 0.9;">
+                💡 E-Mails an laola@baederbook.de werden automatisch verarbeitet
+            </p>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="voice.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+

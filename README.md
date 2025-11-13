@@ -14,29 +14,33 @@ Eine moderne, mobiloptimierte Web-App für professionelle deutschsprachige Gesch
 - 🌓 **Dark Mode**: Automatische Anpassung an System-Einstellungen
 - ⚡ **Schnell**: Serverless-Architektur für beste Performance
 
-## 🎭 Drei Modi
+## 🎯 Anwendungen
 
-### 1. E-Mail-Assistent - Manuell (`index.html`)
-Perfekt zum schnellen Testen oder für einzelne E-Mails:
+Die App bietet eine Startseite (`index.html`) mit zwei Hauptfunktionen:
+
+### 1. E-Mail-Assistent (`email.html`)
+
+**Manueller Modus:**
 - E-Mail manuell einfügen oder per Sprache diktieren
 - Sofort Antwortentwurf erhalten
 - Bearbeitung möglich
 - Direkter E-Mail-Versand
 - Sprachbefehle verfügbar
 
-### 2. E-Mail-Assistent - Automatisch
-Für die Integration mit Ihrem E-Mail-Postfach:
+**Automatischer Modus:**
 - Automatischer E-Mail-Empfang über CloudMailin
 - KI-gestützte Antworterstellung
-- E-Mail-Benachrichtigungen
+- E-Mail-Benachrichtigungen an christof.drost@landau.de
 - Läuft 24/7 im Hintergrund
 
-### 3. Meeting-Protokoll (`meeting.html`)
+### 2. Meeting-Protokoll (`meeting.html`)
+
 KI-gestützte Meeting-Aufnahme und Protokollierung:
 - Audio-Aufnahme direkt im Browser
 - Automatische Transkription mit OpenAI Whisper
 - Professionelle Protokollerstellung mit GPT-4
 - Bearbeitbar und per E-Mail versendbar
+- Visualisierung der Aufnahme in Echtzeit
 
 ## 🚀 Lokale Installation
 
