@@ -124,16 +124,30 @@ input[type="date"] {
     border-radius: 0.75rem;
     font-size: 1rem;
     transition: all 0.3s ease;
-    background: var(--bg-color);
-    color: #1e293b;
-    -webkit-text-fill-color: #1e293b;
+    background: rgba(15, 23, 42, 0.6);
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    opacity: 1;
+}
+
+input::-webkit-input-placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+input::-moz-placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
 input:focus {
     outline: none;
     border-color: var(--primary-color);
-    background: white;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    background: rgba(15, 23, 42, 0.8);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    color: #ffffff !important;
 }
 
 .toggle-visibility {
@@ -168,17 +182,31 @@ textarea {
     line-height: 1.6;
     resize: vertical;
     transition: all 0.3s ease;
-    background: var(--bg-color);
+    background: rgba(15, 23, 42, 0.6);
     min-height: 150px;
-    color: #1e293b;
-    -webkit-text-fill-color: #1e293b;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    opacity: 1;
+}
+
+textarea::-webkit-input-placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+textarea::-moz-placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
 textarea:focus {
     outline: none;
     border-color: var(--primary-color);
-    background: white;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    background: rgba(15, 23, 42, 0.8);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    color: #ffffff !important;
 }
 
 .action-section {
