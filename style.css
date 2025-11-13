@@ -115,7 +115,9 @@ label {
 }
 
 input[type="password"],
-input[type="text"] {
+input[type="text"],
+input[type="email"],
+input[type="date"] {
     width: 100%;
     padding: 0.875rem 3rem 0.875rem 1rem;
     border: 2px solid var(--border-color);
@@ -123,6 +125,8 @@ input[type="text"] {
     font-size: 1rem;
     transition: all 0.3s ease;
     background: var(--bg-color);
+    color: #1e293b;
+    -webkit-text-fill-color: #1e293b;
 }
 
 input:focus {
@@ -166,6 +170,8 @@ textarea {
     transition: all 0.3s ease;
     background: var(--bg-color);
     min-height: 150px;
+    color: #1e293b;
+    -webkit-text-fill-color: #1e293b;
 }
 
 textarea:focus {
@@ -259,7 +265,7 @@ textarea:focus {
 
 .email-output-editable {
     width: 100%;
-    background: var(--bg-color);
+    background: #ffffff;
     padding: 1.5rem;
     border-radius: 0.75rem;
     line-height: 1.8;
@@ -269,6 +275,8 @@ textarea:focus {
     resize: vertical;
     min-height: 200px;
     transition: all 0.3s ease;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
 }
 
 .email-output-editable:focus {
@@ -589,17 +597,28 @@ footer {
 
     .email-output {
         background: #0f172a;
+        color: #f1f5f9;
     }
 
     input,
     textarea {
         background: #0f172a;
-        color: var(--text-color);
+        color: #f1f5f9;
     }
 
     input:focus,
     textarea:focus {
         background: #1e293b;
+        color: #f1f5f9;
+    }
+    
+    /* Wichtig: Ausgabe-Bereiche bleiben hell mit schwarzem Text */
+    .email-output-editable,
+    .transcript-box,
+    .protocol-box {
+        background: #ffffff !important;
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
     }
 }
 
