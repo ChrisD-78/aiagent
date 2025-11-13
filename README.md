@@ -14,20 +14,29 @@ Eine moderne, mobiloptimierte Web-App für professionelle deutschsprachige Gesch
 - 🌓 **Dark Mode**: Automatische Anpassung an System-Einstellungen
 - ⚡ **Schnell**: Serverless-Architektur für beste Performance
 
-## 🎭 Zwei Modi
+## 🎭 Drei Modi
 
-### 1. Manueller Modus (`index.html`)
+### 1. E-Mail-Assistent - Manuell (`index.html`)
 Perfekt zum schnellen Testen oder für einzelne E-Mails:
-- E-Mail manuell einfügen
+- E-Mail manuell einfügen oder per Sprache diktieren
 - Sofort Antwortentwurf erhalten
-- Keine E-Mail-Konfiguration nötig
+- Bearbeitung möglich
+- Direkter E-Mail-Versand
+- Sprachbefehle verfügbar
 
-### 2. Automatischer Modus (`dashboard.html`)
+### 2. E-Mail-Assistent - Automatisch
 Für die Integration mit Ihrem E-Mail-Postfach:
-- Automatischer IMAP-Abruf
-- Verarbeitet alle ungelesenen E-Mails
-- Dashboard mit Übersicht
-- Ein-Klick-Kopieren der Antworten
+- Automatischer E-Mail-Empfang über CloudMailin
+- KI-gestützte Antworterstellung
+- E-Mail-Benachrichtigungen
+- Läuft 24/7 im Hintergrund
+
+### 3. Meeting-Protokoll (`meeting.html`)
+KI-gestützte Meeting-Aufnahme und Protokollierung:
+- Audio-Aufnahme direkt im Browser
+- Automatische Transkription mit OpenAI Whisper
+- Professionelle Protokollerstellung mit GPT-4
+- Bearbeitbar und per E-Mail versendbar
 
 ## 🚀 Lokale Installation
 

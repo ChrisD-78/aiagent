@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Protokoll - KI Assistent</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .meeting-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .record-btn {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .record-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .record-btn.recording {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            animation: recordPulse 2s ease-in-out infinite;
+        }
+
+        .record-btn.processing {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes recordPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 16px rgba(245, 87, 108, 0.4); }
+            50% { transform: scale(1.1); box-shadow: 0 12px 24px rgba(245, 87, 108, 0.6); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .timer {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer.recording {
+            color: #f5576c;
+        }
+
+        .audio-visualizer {
+            width: 100%;
+            height: 80px;
+            background: var(--bg-color);
+            border-radius: 0.75rem;
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+        }
+
+        .audio-bar {
+            position: absolute;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            transition: height 0.1s ease;
+        }
+
+        .transcript-box {
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            min-height: 150px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid var(--border-color);
+            white-space: pre-wrap;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .protocol-box {
+            background: #f0f9ff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 2px solid var(--primary-color);
+            white-space: pre-wrap;
+            line-height: 1.8;
+            font-size: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .meeting-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .info-input {
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .info-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .protocol-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .icon-text {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎙️ Meeting Protokoll</h1>
+            <p class="subtitle">KI-gestützte Aufnahme und Protokollierung</p>
+        </header>
+
+        <main>
+            <!-- Meeting Informationen -->
+            <div class="card">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">Meeting Informationen</h2>
+                <div class="meeting-info">
+                    <div class="info-field">
+                        <label class="info-label" for="meetingTitle">Meeting Titel</label>
+                        <input type="text" id="meetingTitle" class="info-input" placeholder="z.B. Projektbesprechung Q4">
+                    </div>
+                    <div class="info-field">
+                        <label class="info-label" for="meetingDate">Datum</label>
+                        <input type="date" id="meetingDate" class="info-input">
+                    </div>
+                    <div class="info-field">
+                        <label class="info-label" for="meetingParticipants">Teilnehmer</label>
+                        <input type="text" id="meetingParticipants" class="info-input" placeholder="z.B. Max, Anna, Peter">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aufnahme-Steuerung -->
+            <div class="card">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">Aufnahme</h2>
+                
+                <div class="meeting-controls">
+                    <button id="recordBtn" class="record-btn" title="Aufnahme starten">
+                        🎙️
+                    </button>
+                    <div class="timer" id="timer">00:00:00</div>
+                </div>
+
+                <div class="audio-visualizer" id="visualizer" style="display: none;">
+                    <!-- Bars werden dynamisch hinzugefügt -->
+                </div>
+
+                <p style="text-align: center; color: var(--text-secondary); margin-top: 1rem;">
+                    <span id="recordStatus">Klicken Sie auf das Mikrofon, um die Aufnahme zu starten</span>
+                </p>
+            </div>
+
+            <!-- Transkript -->
+            <div class="card" id="transcriptCard" style="display: none;">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">
+                    <span class="icon-text">
+                        <span>📝</span>
+                        <span>Transkript</span>
+                    </span>
+                </h2>
+                <div class="transcript-box" id="transcriptBox">
+                    Transkription wird erstellt...
+                </div>
+            </div>
+
+            <!-- Protokoll -->
+            <div class="card" id="protocolCard" style="display: none;">
+                <h2 style="color: var(--primary-color); margin-bottom: 1rem;">
+                    <span class="icon-text">
+                        <span>📋</span>
+                        <span>Meeting-Protokoll</span>
+                    </span>
+                </h2>
+                <div class="protocol-box" id="protocolBox">
+                    Protokoll wird erstellt...
+                </div>
+
+                <div class="protocol-actions">
+                    <button id="copyProtocolBtn" class="btn-secondary">
+                        <span>📋</span> Protokoll kopieren
+                    </button>
+                    <button id="editProtocolBtn" class="btn-secondary">
+                        <span>✏️</span> Bearbeiten
+                    </button>
+                    <div style="flex: 1; min-width: 250px;">
+                        <input type="email" id="protocolEmail" class="info-input" placeholder="E-Mail-Adresse" style="width: 100%;">
+                    </div>
+                    <button id="sendProtocolBtn" class="btn-send">
+                        <span>📧</span> Protokoll senden
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loader -->
+            <div class="loader" id="loader" style="display: none;">
+                <div class="spinner"></div>
+                <p id="loaderText">Verarbeite Meeting...</p>
+            </div>
+        </main>
+
+        <footer>
+            <p>KI-gestütztes Meeting-Protokoll | Powered by OpenAI</p>
+            <p style="margin-top: 0.5rem; font-size: 0.875rem;">
+                <a href="index.html" style="color: white; opacity: 0.9; text-decoration: underline;">
+                    📧 Zum E-Mail-Assistenten
+                </a>
+            </p>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="meeting.js"></script>
+</body>
+</html>
+
