@@ -53,101 +53,212 @@
         .lola-card {
             background: var(--card-bg);
             border-radius: 1.5rem;
-            padding: 2.5rem;
+            padding: 2rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transition: all 0.4s ease;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto 2rem;
             position: relative;
             overflow: hidden;
             border: 3px solid transparent;
-            max-width: 900px;
-            margin: 0 auto 2rem;
         }
 
-        .lola-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(255, 182, 193, 0.1) 0%, rgba(255, 192, 203, 0.1) 100%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .lola-card:hover {
-            transform: translateY(-5px) scale(1.01);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            border-color: #ffb6c1;
-        }
-
-        .lola-card:hover::before {
-            opacity: 1;
+        .lola-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
         }
 
         .lola-icon {
-            font-size: 4rem;
+            font-size: 3.5rem;
             animation: float 3s ease-in-out infinite;
-            position: relative;
-            z-index: 1;
-            flex-shrink: 0;
-        }
-
-        .lola-content {
-            flex: 1;
-            position: relative;
-            z-index: 1;
-        }
-
-        .lola-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-color);
             margin-bottom: 0.75rem;
         }
 
-        .lola-description {
-            font-size: 1.1rem;
+        .lola-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .lola-subtitle {
+            font-size: 1rem;
             color: var(--text-secondary);
-            line-height: 1.6;
+        }
+
+        .lola-chat-container {
+            max-height: 400px;
+            overflow-y: auto;
             margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 1rem;
+            min-height: 200px;
         }
 
-        .lola-features {
+        .lola-message {
             display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s ease-in;
         }
 
-        .lola-feature {
+        .lola-message.user {
+            flex-direction: row-reverse;
+        }
+
+        .lola-message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            color: var(--text-secondary);
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .lola-message.user .lola-message-avatar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+        }
+
+        .lola-message.lola .lola-message-avatar {
+            background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 100%);
+        }
+
+        .lola-message-content {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            color: #ffffff;
+            line-height: 1.5;
+            max-width: 75%;
             font-size: 0.95rem;
         }
 
-        .lola-feature::before {
-            content: '✨';
-            font-size: 1.2rem;
+        .lola-message.user .lola-message-content {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+            color: white;
         }
 
-        .lola-badge {
-            display: inline-block;
+        .lola-typing {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 0.75rem;
+            width: fit-content;
+        }
+
+        .lola-typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            animation: typing 1.4s infinite;
+        }
+
+        .lola-typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .lola-typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .lola-input-area {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+
+        .lola-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .lola-input {
+            width: 100%;
+            padding: 0.75rem 3rem 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.75rem;
+            font-size: 0.95rem;
+            font-family: inherit;
+            resize: none;
+            min-height: 50px;
+            max-height: 120px;
+            background: rgba(15, 23, 42, 0.6);
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            line-height: 1.5;
+        }
+
+        .lola-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .lola-input:focus {
+            outline: none;
+            border-color: #ffb6c1;
+            box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.2);
+        }
+
+        .lola-input-actions {
+            position: absolute;
+            right: 0.5rem;
+            bottom: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .lola-voice-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lola-voice-btn:hover:not(:disabled) {
+            transform: scale(1.1);
+        }
+
+        .lola-voice-btn.listening {
+            animation: pulse 1.5s ease-in-out infinite;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .lola-send-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
             background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 100%);
             color: #333;
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-top: 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .lola-send-btn:hover:not(:disabled) {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(255, 182, 193, 0.4);
+        }
+
+        .lola-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .app-grid {
@@ -328,25 +439,29 @@
             }
 
             .lola-card {
-                flex-direction: column;
-                text-align: center;
-                padding: 2rem 1.5rem;
+                padding: 1.5rem;
             }
 
             .lola-icon {
-                font-size: 3.5rem;
+                font-size: 3rem;
             }
 
             .lola-title {
                 font-size: 1.5rem;
             }
 
-            .lola-description {
-                font-size: 1rem;
+            .lola-subtitle {
+                font-size: 0.9rem;
             }
 
-            .lola-features {
-                justify-content: center;
+            .lola-chat-container {
+                max-height: 300px;
+                min-height: 150px;
+            }
+
+            .lola-message-content {
+                max-width: 85%;
+                font-size: 0.9rem;
             }
 
             .app-grid {
@@ -373,21 +488,36 @@
 
         <!-- Lola AI Agent -->
         <div style="padding: 0 1rem;">
-            <a href="lola.html" class="lola-card">
-                <div class="lola-icon">💬</div>
-                <div class="lola-content">
-                    <h2 class="lola-title">Lola - Ihr persönlicher KI-Assistent</h2>
-                    <p class="lola-description">
-                        Ihr intelligenter Assistent für den Arbeitsalltag. Lola hilft Ihnen bei Fragen zu LA OLA, dem Freibad Landau und unterstützt Sie bei allen geschäftlichen Anliegen.
-                    </p>
-                    <div class="lola-features">
-                        <div class="lola-feature">Sprach- & Texteingabe</div>
-                        <div class="lola-feature">Personalisiert für Sie</div>
-                        <div class="lola-feature">Tägliche Arbeitshilfe</div>
-                    </div>
-                    <div class="lola-badge">👋 Hallo Christof!</div>
+            <div class="lola-card">
+                <div class="lola-header">
+                    <div class="lola-icon">💬</div>
+                    <h2 class="lola-title">Lola - Dein persönlicher KI-Assistent</h2>
+                    <p class="lola-subtitle">Dein intelligenter Helfer für den Arbeitsalltag</p>
                 </div>
-            </a>
+
+                <div class="lola-chat-container" id="lolaChatMessages">
+                    <!-- Nachrichten werden hier eingefügt -->
+                </div>
+
+                <div class="lola-input-area">
+                    <div class="lola-input-wrapper">
+                        <textarea 
+                            id="lolaInput" 
+                            class="lola-input" 
+                            placeholder="Schreibe deine Frage... oder nutze das Mikrofon"
+                            rows="1"
+                        ></textarea>
+                        <div class="lola-input-actions">
+                            <button id="lolaVoiceBtn" class="lola-voice-btn" title="Spracheingabe">
+                                🎤
+                            </button>
+                            <button id="lolaSendBtn" class="lola-send-btn" title="Senden">
+                                ➤
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="app-grid">
@@ -482,6 +612,182 @@
             </p>
         </footer>
     </div>
+
+    <script src="voice.js"></script>
+    <script>
+        // Lola Chat Interface
+        const lolaChatMessages = document.getElementById('lolaChatMessages');
+        const lolaInput = document.getElementById('lolaInput');
+        const lolaSendBtn = document.getElementById('lolaSendBtn');
+        const lolaVoiceBtn = document.getElementById('lolaVoiceBtn');
+
+        // Auto-resize textarea
+        lolaInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Enter zum Senden, Shift+Enter für neue Zeile
+        lolaInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendLolaMessage();
+            }
+        });
+
+        // Senden-Button
+        lolaSendBtn.addEventListener('click', sendLolaMessage);
+
+        // Sprachsteuerung
+        if (typeof voiceAssistant !== 'undefined' && voiceAssistant && voiceAssistant.isAvailable()) {
+            lolaVoiceBtn.addEventListener('click', () => {
+                if (voiceAssistant.isListening) {
+                    voiceAssistant.stopListening();
+                    lolaVoiceBtn.classList.remove('listening');
+                    lolaVoiceBtn.textContent = '🎤';
+                    return;
+                }
+
+                voiceAssistant.startListening('dictate', {
+                    onStart: () => {
+                        lolaVoiceBtn.classList.add('listening');
+                        lolaVoiceBtn.textContent = '⏺️';
+                    },
+                    onResult: (transcript) => {
+                        lolaInput.value = transcript;
+                        lolaInput.style.height = 'auto';
+                        lolaInput.style.height = Math.min(lolaInput.scrollHeight, 120) + 'px';
+                        // Automatisch senden nach Diktat
+                        setTimeout(() => sendLolaMessage(), 500);
+                    },
+                    onEnd: () => {
+                        lolaVoiceBtn.classList.remove('listening');
+                        lolaVoiceBtn.textContent = '🎤';
+                    },
+                    onError: (error) => {
+                        lolaVoiceBtn.classList.remove('listening');
+                        lolaVoiceBtn.textContent = '🎤';
+                    }
+                });
+            });
+        } else {
+            lolaVoiceBtn.disabled = true;
+            lolaVoiceBtn.style.opacity = '0.5';
+            lolaVoiceBtn.title = 'Spracherkennung nicht verfügbar';
+        }
+
+        // Nachricht senden
+        async function sendLolaMessage() {
+            const message = lolaInput.value.trim();
+            
+            if (!message) {
+                return;
+            }
+
+            // User-Nachricht anzeigen
+            addLolaMessage(message, 'user');
+            lolaInput.value = '';
+            lolaInput.style.height = 'auto';
+            
+            // Loading-Indikator
+            const loadingId = showLolaTyping();
+            
+            // Buttons deaktivieren
+            lolaSendBtn.disabled = true;
+            lolaVoiceBtn.disabled = true;
+
+            try {
+                const response = await fetch('/.netlify/functions/lola-chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Fehler bei der Kommunikation mit Lola');
+                }
+
+                const data = await response.json();
+                
+                // Loading entfernen
+                removeLolaTyping(loadingId);
+                
+                // Lola-Antwort anzeigen
+                addLolaMessage(data.response, 'lola');
+                
+            } catch (error) {
+                console.error('Fehler:', error);
+                removeLolaTyping(loadingId);
+                addLolaMessage('Entschuldigung, es ist ein Fehler aufgetreten. Bitte versuche es erneut.', 'lola');
+            } finally {
+                lolaSendBtn.disabled = false;
+                lolaVoiceBtn.disabled = false;
+            }
+        }
+
+        // Nachricht zum Chat hinzufügen
+        function addLolaMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `lola-message ${sender}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'lola-message-avatar';
+            avatar.textContent = sender === 'user' ? '👤' : '💬';
+            
+            const content = document.createElement('div');
+            content.className = 'lola-message-content';
+            content.textContent = text;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(content);
+            
+            lolaChatMessages.appendChild(messageDiv);
+            
+            // Scroll nach unten
+            lolaChatMessages.scrollTop = lolaChatMessages.scrollHeight;
+        }
+
+        // Typing-Indikator anzeigen
+        function showLolaTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'lola-message lola';
+            typingDiv.id = 'lola-typing-indicator';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'lola-message-avatar';
+            avatar.textContent = '💬';
+            
+            const indicator = document.createElement('div');
+            indicator.className = 'lola-typing';
+            indicator.innerHTML = '<div class="lola-typing-dot"></div><div class="lola-typing-dot"></div><div class="lola-typing-dot"></div>';
+            
+            typingDiv.appendChild(avatar);
+            typingDiv.appendChild(indicator);
+            
+            lolaChatMessages.appendChild(typingDiv);
+            lolaChatMessages.scrollTop = lolaChatMessages.scrollHeight;
+            
+            return 'lola-typing-indicator';
+        }
+
+        // Typing-Indikator entfernen
+        function removeLolaTyping(id) {
+            const indicator = document.getElementById(id);
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        // Initiale Begrüßung
+        setTimeout(() => {
+            addLolaMessage('Hallo Christof! 👋 Ich bin Lola, dein persönlicher Assistent. Ich helfe dir gerne bei Fragen zu LA OLA, dem Freibad Landau oder bei anderen geschäftlichen Anliegen. Wie kann ich dir heute helfen?', 'lola');
+        }, 500);
+    </script>
 </body>
 </html>
 

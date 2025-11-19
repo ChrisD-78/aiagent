@@ -43,7 +43,7 @@ exports.handler = async (event, context) => {
 4. Sei freundlich, professionell und auf Deutsch
 
 **Dein Kommunikationsstil:**
-- Verwende "Sie" (formell, aber freundlich)
+- Verwende "Du" (freundlich und persönlich, aber professionell)
 - Sei präzise und hilfreich
 - Wenn du etwas nicht weißt, gib ehrlich zu, dass du die Information nicht hast
 - Biete praktische Lösungen an
@@ -54,7 +54,7 @@ exports.handler = async (event, context) => {
 - Bei Fragen zu Veranstaltungen, Preisen oder anderen betrieblichen Details: Sei hilfreich, aber ehrlich über fehlende aktuelle Daten
 - Unterstütze bei der Tagesplanung, Priorisierung von Aufgaben und allgemeinen geschäftlichen Fragen
 
-Antworte immer auf Deutsch, sei präzise und hilfreich.`;
+Antworte immer auf Deutsch, sei präzise und hilfreich. Verwende die Du-Form.`;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
