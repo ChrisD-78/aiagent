@@ -738,6 +738,14 @@
             return text.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA00}-\u{1FA6F}]|[\u{1FA70}-\u{1FAFF}]|[\u{200D}]|[\u{FE0F}]/gu, '').trim();
         }
 
+        // Funktion zur Korrektur der Aussprache von "LA OLA"
+        function fixPronunciation(text) {
+            // Ersetze "LA OLA" (alle Varianten) durch "laaa olaaa" für korrekte Aussprache
+            return text.replace(/\bLA\s+OLA\b/gi, 'laaa olaaa')
+                      .replace(/\bLA\s*OLA\b/gi, 'laaa olaaa')
+                      .replace(/LA\s+OLA/gi, 'laaa olaaa');
+        }
+
         // Funktion zum Vorlesen mit deutscher Frauenstimme
         function speakLolaMessage(text, button) {
             if (!window.speechSynthesis) {
@@ -746,7 +754,10 @@
             }
 
             // Emojis aus Text entfernen
-            const cleanText = removeEmojis(text);
+            let cleanText = removeEmojis(text);
+            
+            // Aussprache korrigieren (LA OLA -> laaa olaaa)
+            cleanText = fixPronunciation(cleanText);
 
             // Aktuelle Stimme aktualisieren
             lolaVoice = findLolaVoice();
@@ -756,9 +767,9 @@
 
             const utterance = new SpeechSynthesisUtterance(cleanText);
             utterance.lang = 'de-DE';
-            utterance.rate = 0.9; // Etwas langsamer für sanftere, freundlichere Stimme
-            utterance.pitch = 1.15; // Etwas höher für freundlichere, weiblichere Stimme
-            utterance.volume = 0.95; // Etwas leiser für sanfteren Klang
+            utterance.rate = 0.85; // Noch langsamer für sanftere, freundlichere Stimme
+            utterance.pitch = 1.2; // Etwas höher für freundlichere, weiblichere Stimme
+            utterance.volume = 0.9; // Leiser für sanfteren, freundlicheren Klang
 
             // Beste verfügbare Stimme verwenden
             if (lolaVoice) {
