@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lola - Ihr persönlicher KI-Assistent</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .chat-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 200px);
+            min-height: 600px;
+        }
+
+        .chat-header {
+            background: var(--card-bg);
+            border-radius: 1rem 1rem 0 0;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header h2 {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.5rem;
+        }
+
+        .chat-header p {
+            margin: 0.5rem 0 0 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--card-bg);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 1rem;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+        }
+
+        .message.lola .message-avatar {
+            background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 100%);
+        }
+
+        .message-content {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 1rem 1.25rem;
+            border-radius: 1rem;
+            color: #ffffff;
+            line-height: 1.6;
+            max-width: 75%;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+            color: white;
+        }
+
+        .message.lola .message-content {
+            background: rgba(15, 23, 42, 0.6);
+            color: #ffffff;
+        }
+
+        .chat-input-area {
+            background: var(--card-bg);
+            border-radius: 0 0 1rem 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-container {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+
+        .chat-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 1rem 3.5rem 1rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 1rem;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: none;
+            min-height: 60px;
+            max-height: 150px;
+            background: rgba(15, 23, 42, 0.6);
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            line-height: 1.5;
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .input-actions {
+            position: absolute;
+            right: 0.5rem;
+            bottom: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .voice-btn-chat {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-btn-chat:hover:not(:disabled) {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+        }
+
+        .voice-btn-chat.listening {
+            animation: pulse 1.5s ease-in-out infinite;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary-color);
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem 1.25rem;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 1rem;
+            color: #ffffff;
+            width: fit-content;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.6;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-action-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(37, 99, 235, 0.1);
+            border: 1px solid var(--primary-color);
+            border-radius: 1.5rem;
+            color: var(--primary-color);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-action-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        @media (max-width: 640px) {
+            .chat-container {
+                height: calc(100vh - 150px);
+                min-height: 500px;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .lola-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💬 Lola - Ihr persönlicher KI-Assistent</h1>
+            <p class="subtitle">Ihr intelligenter Helfer für den Arbeitsalltag</p>
+        </header>
+
+        <main>
+            <div class="card" style="padding: 0; overflow: hidden;">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <h2>👋 Hallo Christof!</h2>
+                        <p>Ich bin Lola, Ihr persönlicher Assistent. Wie kann ich Ihnen heute helfen?</p>
+                    </div>
+
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="welcome-message">
+                            <p>💡 <strong>Stellen Sie mir Fragen zu:</strong></p>
+                            <div class="quick-actions">
+                                <button class="quick-action-btn" onclick="sendQuickMessage('Wie viele Besucher hatten wir heute?')">Besucherzahlen</button>
+                                <button class="quick-action-btn" onclick="sendQuickMessage('Was sind die Öffnungszeiten von LA OLA?')">Öffnungszeiten</button>
+                                <button class="quick-action-btn" onclick="sendQuickMessage('Welche Veranstaltungen stehen an?')">Veranstaltungen</button>
+                                <button class="quick-action-btn" onclick="sendQuickMessage('Hilf mir bei meiner Tagesplanung')">Tagesplanung</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input-area">
+                        <div class="input-container">
+                            <div class="chat-input-wrapper">
+                                <textarea 
+                                    id="chatInput" 
+                                    class="chat-input" 
+                                    placeholder="Schreiben Sie Ihre Frage... oder nutzen Sie das Mikrofon"
+                                    rows="1"
+                                ></textarea>
+                                <div class="input-actions">
+                                    <button id="voiceBtn" class="voice-btn-chat" title="Spracheingabe">
+                                        🎤
+                                    </button>
+                                    <button id="sendBtn" class="send-btn" title="Senden">
+                                        ➤
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="text-align: center; margin-top: 0.75rem; color: var(--text-secondary); font-size: 0.875rem;">
+                            💡 Tipp: Drücken Sie Enter zum Senden, Shift+Enter für neue Zeile
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>
+                <a href="index.html" style="color: white; opacity: 0.9; text-decoration: underline; font-weight: 600;">
+                    ← Zurück zur Startseite
+                </a>
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.875rem; opacity: 0.9;">
+                Lola - Personalisierter KI-Assistent für Christof Drost | LA OLA & Freibad Landau
+            </p>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="voice.js"></script>
+    <script src="lola.js"></script>
+</body>
+</html>
+

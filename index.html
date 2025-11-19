@@ -50,6 +50,106 @@
             }
         }
 
+        .lola-card {
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 2rem;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid transparent;
+            max-width: 900px;
+            margin: 0 auto 2rem;
+        }
+
+        .lola-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 182, 193, 0.1) 0%, rgba(255, 192, 203, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .lola-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: #ffb6c1;
+        }
+
+        .lola-card:hover::before {
+            opacity: 1;
+        }
+
+        .lola-icon {
+            font-size: 4rem;
+            animation: float 3s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        .lola-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .lola-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .lola-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .lola-features {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .lola-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .lola-feature::before {
+            content: '✨';
+            font-size: 1.2rem;
+        }
+
+        .lola-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 100%);
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
         .app-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -227,6 +327,28 @@
                 font-size: 1rem;
             }
 
+            .lola-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 2rem 1.5rem;
+            }
+
+            .lola-icon {
+                font-size: 3.5rem;
+            }
+
+            .lola-title {
+                font-size: 1.5rem;
+            }
+
+            .lola-description {
+                font-size: 1rem;
+            }
+
+            .lola-features {
+                justify-content: center;
+            }
+
             .app-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
@@ -247,6 +369,25 @@
         <div class="hero-section">
             <h1 class="hero-title">🤖 KI-Assistent für Business</h1>
             <p class="hero-subtitle">Professionelle E-Mail-Bearbeitung und Meeting-Protokollierung</p>
+        </div>
+
+        <!-- Lola AI Agent -->
+        <div style="padding: 0 1rem;">
+            <a href="lola.html" class="lola-card">
+                <div class="lola-icon">💬</div>
+                <div class="lola-content">
+                    <h2 class="lola-title">Lola - Ihr persönlicher KI-Assistent</h2>
+                    <p class="lola-description">
+                        Ihr intelligenter Assistent für den Arbeitsalltag. Lola hilft Ihnen bei Fragen zu LA OLA, dem Freibad Landau und unterstützt Sie bei allen geschäftlichen Anliegen.
+                    </p>
+                    <div class="lola-features">
+                        <div class="lola-feature">Sprach- & Texteingabe</div>
+                        <div class="lola-feature">Personalisiert für Sie</div>
+                        <div class="lola-feature">Tägliche Arbeitshilfe</div>
+                    </div>
+                    <div class="lola-badge">👋 Hallo Christof!</div>
+                </div>
+            </a>
         </div>
 
         <div class="app-grid">
