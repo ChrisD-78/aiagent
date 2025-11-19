@@ -740,10 +740,25 @@
 
         // Funktion zur Korrektur der Aussprache von "LA OLA"
         function fixPronunciation(text) {
-            // Ersetze "LA OLA" (alle Varianten) durch "laaa olaaa" für korrekte Aussprache
-            return text.replace(/\bLA\s+OLA\b/gi, 'laaa olaaa')
-                      .replace(/\bLA\s*OLA\b/gi, 'laaa olaaa')
-                      .replace(/LA\s+OLA/gi, 'laaa olaaa');
+            // Ersetze "LA OLA" durch phonetische Schreibweise für gedehnte Aussprache
+            // Verwendet mehrfache Vokale für gedehnte Aussprache: "laaa olaaa"
+            let fixed = text;
+            
+            // Alle Varianten von "LA OLA" ersetzen (case-insensitive, mit/ohne Leerzeichen)
+            // Strategie: Mehrfache Vokale (5-6x) für deutliche gedehnte Aussprache
+            const replacement = 'laaaaa olaaaaa'; // 5-6 Vokale für gedehnte Aussprache
+            
+            // Verschiedene Regex-Patterns für alle möglichen Schreibweisen
+            fixed = fixed.replace(/\bLA\s+OLA\b/gi, replacement);
+            fixed = fixed.replace(/\bLA\s*OLA\b/gi, replacement);
+            fixed = fixed.replace(/LA\s+OLA/gi, replacement);
+            fixed = fixed.replace(/LA\s*OLA/gi, replacement);
+            fixed = fixed.replace(/L\s*A\s+O\s*L\s*A/gi, replacement);
+            
+            // Zusätzlich: Ersetze auch wenn es Teil eines größeren Wortes ist
+            fixed = fixed.replace(/LA\s*OLA/gi, replacement);
+            
+            return fixed;
         }
 
         // Funktion zum Vorlesen mit deutscher Frauenstimme
