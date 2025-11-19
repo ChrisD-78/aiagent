@@ -261,6 +261,32 @@
             cursor: not-allowed;
         }
 
+        .lola-stop-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 0.5rem;
+        }
+
+        .lola-stop-btn:hover:not(:disabled) {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .lola-stop-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
         .app-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -516,6 +542,9 @@
                             </button>
                         </div>
                     </div>
+                    <button id="lolaStopBtn" class="lola-stop-btn" title="Sprachausgabe stoppen" style="display: none;">
+                        ⏹
+                    </button>
                 </div>
             </div>
         </div>
@@ -620,6 +649,7 @@
         const lolaInput = document.getElementById('lolaInput');
         const lolaSendBtn = document.getElementById('lolaSendBtn');
         const lolaVoiceBtn = document.getElementById('lolaVoiceBtn');
+        const lolaStopBtn = document.getElementById('lolaStopBtn');
 
         // Auto-resize textarea
         lolaInput.addEventListener('input', function() {
@@ -637,6 +667,29 @@
 
         // Senden-Button
         lolaSendBtn.addEventListener('click', sendLolaMessage);
+
+        // Stop-Button für Sprachausgabe
+        lolaStopBtn.addEventListener('click', () => {
+            if (typeof voiceAssistant !== 'undefined' && voiceAssistant) {
+                voiceAssistant.stopSpeaking();
+                lolaStopBtn.style.display = 'none';
+            }
+        });
+
+        // Hilfsfunktion für Sprachausgabe mit Stop-Button
+        function speakLolaMessage(text) {
+            if (typeof voiceAssistant !== 'undefined' && voiceAssistant) {
+                lolaStopBtn.style.display = 'flex';
+                voiceAssistant.speak(text);
+                // Stop-Button verstecken, wenn Sprechen beendet
+                const checkSpeaking = setInterval(() => {
+                    if (!voiceAssistant.isSpeaking) {
+                        lolaStopBtn.style.display = 'none';
+                        clearInterval(checkSpeaking);
+                    }
+                }, 200);
+            }
+        }
 
         // Sprachsteuerung
         if (typeof voiceAssistant !== 'undefined' && voiceAssistant && voiceAssistant.isAvailable()) {
@@ -720,10 +773,16 @@
                 // Lola-Antwort anzeigen
                 addLolaMessage(data.response, 'lola');
                 
+                // Lola-Antwort vorlesen
+                speakLolaMessage(data.response);
+                
             } catch (error) {
                 console.error('Fehler:', error);
                 removeLolaTyping(loadingId);
-                addLolaMessage('Entschuldigung, es ist ein Fehler aufgetreten. Bitte versuche es erneut.', 'lola');
+                const errorMsg = 'Entschuldigung, es ist ein Fehler aufgetreten. Bitte versuche es erneut.';
+                addLolaMessage(errorMsg, 'lola');
+                // Fehlermeldung vorlesen
+                speakLolaMessage(errorMsg);
             } finally {
                 lolaSendBtn.disabled = false;
                 lolaVoiceBtn.disabled = false;
@@ -785,7 +844,10 @@
 
         // Initiale Begrüßung
         setTimeout(() => {
-            addLolaMessage('Hallo Christof! 👋 Ich bin Lola, dein persönlicher Assistent. Ich helfe dir gerne bei Fragen zu LA OLA, dem Freibad Landau oder bei anderen geschäftlichen Anliegen. Wie kann ich dir heute helfen?', 'lola');
+            const welcomeMsg = 'Hallo Christof! 👋 Ich bin Lola, dein persönlicher Assistent. Ich helfe dir gerne bei Fragen zu LA OLA, dem Freibad Landau oder bei anderen geschäftlichen Anliegen. Wie kann ich dir heute helfen?';
+            addLolaMessage(welcomeMsg, 'lola');
+            // Begrüßung vorlesen
+            speakLolaMessage(welcomeMsg);
         }, 500);
     </script>
 </body>
