@@ -134,6 +134,42 @@
             line-height: 1.5;
             max-width: 75%;
             font-size: 0.95rem;
+            position: relative;
+        }
+
+        .lola-message.lola .lola-message-content {
+            padding-right: 2.5rem;
+        }
+
+        .lola-speak-btn {
+            position: absolute;
+            right: 0.5rem;
+            top: 0.5rem;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 182, 193, 0.3);
+            color: #ffb6c1;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.7;
+        }
+
+        .lola-speak-btn:hover {
+            background: rgba(255, 182, 193, 0.5);
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .lola-speak-btn.speaking {
+            background: rgba(255, 182, 193, 0.7);
+            opacity: 1;
+            animation: pulse 1.5s ease-in-out infinite;
         }
 
         .lola-message.user .lola-message-content {
@@ -258,32 +294,6 @@
 
         .lola-send-btn:disabled {
             opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .lola-stop-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: none;
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 0.5rem;
-        }
-
-        .lola-stop-btn:hover:not(:disabled) {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-        }
-
-        .lola-stop-btn:disabled {
-            opacity: 0.3;
             cursor: not-allowed;
         }
 
@@ -542,9 +552,6 @@
                             </button>
                         </div>
                     </div>
-                    <button id="lolaStopBtn" class="lola-stop-btn" title="Sprachausgabe stoppen" style="display: none;">
-                        ⏹
-                    </button>
                 </div>
             </div>
         </div>
@@ -649,7 +656,64 @@
         const lolaInput = document.getElementById('lolaInput');
         const lolaSendBtn = document.getElementById('lolaSendBtn');
         const lolaVoiceBtn = document.getElementById('lolaVoiceBtn');
-        const lolaStopBtn = document.getElementById('lolaStopBtn');
+
+        // Deutsche Frauenstimme finden
+        let lolaVoice = null;
+        function findLolaVoice() {
+            if (!window.speechSynthesis) return null;
+            
+            const voices = window.speechSynthesis.getVoices();
+            if (voices.length === 0) return null;
+            
+            // Filtere deutsche Stimmen
+            const germanVoices = voices.filter(v => 
+                v.lang.startsWith('de') || 
+                v.lang.includes('German') ||
+                v.name.toLowerCase().includes('german') ||
+                v.name.toLowerCase().includes('deutsch')
+            );
+            
+            if (germanVoices.length === 0) {
+                // Fallback: erste verfügbare Stimme
+                return voices[0];
+            }
+            
+            // Bevorzuge Frauenstimmen (wenn gender verfügbar)
+            const femaleVoices = germanVoices.filter(v => 
+                v.gender === 'female' || 
+                v.name.toLowerCase().includes('anna') ||
+                v.name.toLowerCase().includes('helga') ||
+                v.name.toLowerCase().includes('maria') ||
+                v.name.toLowerCase().includes('sarah')
+            );
+            
+            if (femaleVoices.length > 0) {
+                // Bevorzuge natürliche/Online-Stimmen
+                const naturalVoice = femaleVoices.find(v => 
+                    v.name.toLowerCase().includes('natural') ||
+                    v.name.toLowerCase().includes('online') ||
+                    v.name.toLowerCase().includes('neural')
+                );
+                if (naturalVoice) return naturalVoice;
+                
+                // Sonst erste Frauenstimme
+                return femaleVoices[0];
+            }
+            
+            // Falls keine Frauenstimme gefunden, nimm die erste deutsche
+            return germanVoices[0];
+        }
+
+        // Stimmen laden (kann asynchron sein)
+        if (window.speechSynthesis) {
+            // Stimmen sofort laden, falls verfügbar
+            lolaVoice = findLolaVoice();
+            
+            // Event für geladene Stimmen
+            window.speechSynthesis.onvoiceschanged = () => {
+                lolaVoice = findLolaVoice();
+            };
+        }
 
         // Auto-resize textarea
         lolaInput.addEventListener('input', function() {
@@ -668,26 +732,64 @@
         // Senden-Button
         lolaSendBtn.addEventListener('click', sendLolaMessage);
 
-        // Stop-Button für Sprachausgabe
-        lolaStopBtn.addEventListener('click', () => {
-            if (typeof voiceAssistant !== 'undefined' && voiceAssistant) {
-                voiceAssistant.stopSpeaking();
-                lolaStopBtn.style.display = 'none';
+        // Funktion zum Vorlesen mit deutscher Frauenstimme
+        function speakLolaMessage(text, button) {
+            if (!window.speechSynthesis) {
+                console.warn('Speech Synthesis nicht verfügbar');
+                return;
             }
-        });
 
-        // Hilfsfunktion für Sprachausgabe mit Stop-Button
-        function speakLolaMessage(text) {
-            if (typeof voiceAssistant !== 'undefined' && voiceAssistant) {
-                lolaStopBtn.style.display = 'flex';
-                voiceAssistant.speak(text);
-                // Stop-Button verstecken, wenn Sprechen beendet
-                const checkSpeaking = setInterval(() => {
-                    if (!voiceAssistant.isSpeaking) {
-                        lolaStopBtn.style.display = 'none';
-                        clearInterval(checkSpeaking);
-                    }
-                }, 200);
+            // Aktuelle Stimme aktualisieren
+            lolaVoice = findLolaVoice();
+
+            // Alle laufenden Sprachausgaben stoppen
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'de-DE';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.1; // Etwas höher für freundlichere Stimme
+            utterance.volume = 1.0;
+
+            // Beste verfügbare Stimme verwenden
+            if (lolaVoice) {
+                utterance.voice = lolaVoice;
+            }
+
+            // Button-Status während des Sprechens
+            utterance.onstart = () => {
+                if (button) {
+                    button.classList.add('speaking');
+                    button.textContent = '⏸';
+                }
+            };
+
+            utterance.onend = () => {
+                if (button) {
+                    button.classList.remove('speaking');
+                    button.textContent = '🔊';
+                }
+            };
+
+            utterance.onerror = (event) => {
+                console.error('Speech synthesis error:', event);
+                if (button) {
+                    button.classList.remove('speaking');
+                    button.textContent = '🔊';
+                }
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Funktion zum Stoppen der Sprachausgabe
+        function stopLolaSpeaking(button) {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+                if (button) {
+                    button.classList.remove('speaking');
+                    button.textContent = '🔊';
+                }
             }
         }
 
@@ -770,19 +872,14 @@
                 // Loading entfernen
                 removeLolaTyping(loadingId);
                 
-                // Lola-Antwort anzeigen
+                // Lola-Antwort anzeigen (mit Vorlesen-Button)
                 addLolaMessage(data.response, 'lola');
-                
-                // Lola-Antwort vorlesen
-                speakLolaMessage(data.response);
                 
             } catch (error) {
                 console.error('Fehler:', error);
                 removeLolaTyping(loadingId);
                 const errorMsg = 'Entschuldigung, es ist ein Fehler aufgetreten. Bitte versuche es erneut.';
                 addLolaMessage(errorMsg, 'lola');
-                // Fehlermeldung vorlesen
-                speakLolaMessage(errorMsg);
             } finally {
                 lolaSendBtn.disabled = false;
                 lolaVoiceBtn.disabled = false;
@@ -801,6 +898,31 @@
             const content = document.createElement('div');
             content.className = 'lola-message-content';
             content.textContent = text;
+            
+            // Vorlesen-Button nur für Lola-Nachrichten
+            if (sender === 'lola' && window.speechSynthesis) {
+                const speakBtn = document.createElement('button');
+                speakBtn.className = 'lola-speak-btn';
+                speakBtn.textContent = '🔊';
+                speakBtn.title = 'Antwort vorlesen';
+                speakBtn.setAttribute('aria-label', 'Antwort vorlesen');
+                
+                // Event Listener für Vorlesen-Button
+                speakBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isSpeaking = speakBtn.classList.contains('speaking');
+                    
+                    if (isSpeaking) {
+                        // Stoppen, wenn bereits am Sprechen
+                        stopLolaSpeaking(speakBtn);
+                    } else {
+                        // Vorlesen starten
+                        speakLolaMessage(text, speakBtn);
+                    }
+                });
+                
+                content.appendChild(speakBtn);
+            }
             
             messageDiv.appendChild(avatar);
             messageDiv.appendChild(content);
@@ -846,8 +968,6 @@
         setTimeout(() => {
             const welcomeMsg = 'Hallo Christof! 👋 Ich bin Lola, dein persönlicher Assistent. Ich helfe dir gerne bei Fragen zu LA OLA, dem Freibad Landau oder bei anderen geschäftlichen Anliegen. Wie kann ich dir heute helfen?';
             addLolaMessage(welcomeMsg, 'lola');
-            // Begrüßung vorlesen
-            speakLolaMessage(welcomeMsg);
         }, 500);
     </script>
 </body>
